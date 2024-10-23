@@ -22,13 +22,4 @@ router.post('/reservas', (req, res) => {
   });
 });
 
-// Obtener reservas por cliente
-router.get('/reservas/:id_cliente', (req, res) => {
-  const { id_cliente } = req.params;
-  db.query('SELECT * FROM reserva WHERE id_cliente = ?', [id_cliente], (err, results) => {
-    if (err) return res.status(500).send(err);
-    res.json(results);
-  });
-});
-
 module.exports = router;
