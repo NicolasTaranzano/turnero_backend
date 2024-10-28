@@ -4,6 +4,12 @@ const cors = require('cors');
 
 const routes = {
 	usuarios: require('./routes/usuarios'),
+	deportes: require('./routes/deportes'),
+	canchas: require('./routes/canchas'),
+	reservas: require('./routes/reservas'),
+	horarios: require('./routes/horarios'),
+	canchaHorarios: require('./routes/canchaHorarios'),
+	
 };
 
 const app = express();
