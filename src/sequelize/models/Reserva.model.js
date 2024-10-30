@@ -14,7 +14,7 @@ module.exports = (Sequelize) => {
                 key: 'id',
             }
         },
-        IdCancha: {
+        IdCancha:{
             type: DataTypes.INTEGER,
             references:{
                 model: 'Cancha',
@@ -22,19 +22,15 @@ module.exports = (Sequelize) => {
             }
         },
         fecha:{
-            type: DataTypes.DATE,
+            type: DataTypes.DATEONLY,
             allowNull: false,
         },
         horario_inicio:{
             type: DataTypes.TIME,
             allowNull: false,
         },
-        horario_fin:{
-            type: DataTypes.TIME,
-            allowNull: false,
-        },
         estado:{
-            type: DataTypes.ENUM('Confirmada','Cancelada','Finalizada'),
+            type: DataTypes.ENUM('Disponible','Reservada'),
             allowNull: false,
         }
     

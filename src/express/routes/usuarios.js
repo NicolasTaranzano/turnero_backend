@@ -1,5 +1,7 @@
 const { models } = require('../../sequelize');
 const { getIdParam } = require('../helpers');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 async function getAll(req, res) {
     try {
@@ -79,37 +81,41 @@ async function remove(req, res) {
     }
 }
 
-async function iniciosesion(req, res) {
-    const { email, contrasena } = req.body; 
-    console.log('Datos recibidos:', { email, contrasena }); 
-
-    try {
+async function login (req, res) {
+    const{ email, contrasena } = req.body;
+    
+    try{
         const usuario = await models.Usuario.findOne({
             where: { email: email }
         });
 
-        console.log('Usuario encontrado:', usuario);
-
-        if (!usuario) {
-            console.error('Usuario no encontrado'); 
-            return res.status(404).json({ error: 'Usuario no encontrado' });
+        if (!usuario || !await bcrypt.compare(contrasena, usuario.contrasena)) {
+            return res.status(401).json({ error: 'Credenciales incorrectas' });
         }
 
-        if (contrasena !== usuario.contrasena) {
-            console.error('Contraseña incorrecta'); 
-            return res.status(401).json({ error: 'Contraseña incorrecta' });
-        }
-
-        console.log('Inicio de sesión exitoso para el usuario:', usuario.email); 
-
-        res.status(200).json({
-            id: usuario.id,
-            email: usuario.email,
-        });
+        const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ message: 'Inicio de sesión exitoso', token });
     } catch (error) {
-        console.error('Error durante el inicio de sesión:', error); 
-        res.status(500).json({ error: 'Ocurrió un error durante el ingreso' });
+        res.status(400).json({ error: 'Error en el inicio de sesión', detalles: error.message });
     }
+
+}
+
+async function register (req, res) {
+    const { nombre, apellido, email, contrasena } = req.body;
+
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(contrasena, salt);
+
+        const usuario = await models.Usuario.create({ nombre, apellido, email, contrasena: hashedPassword });
+
+        res.status(201).json({ message: 'Usuario registrado con éxito', usuario });
+
+    } catch (error) {
+        res.status(400).json({ error: 'Error en el registro', detalles: error.message });
+    }
+
 }
 
 module.exports = {
@@ -118,5 +124,6 @@ module.exports = {
     create,
     update,
     remove,
-    iniciosesion,
+    login,
+    register,
 };

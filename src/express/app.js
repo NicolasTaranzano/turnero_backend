@@ -7,9 +7,7 @@ const routes = {
 	deportes: require('./routes/deportes'),
 	canchas: require('./routes/canchas'),
 	reservas: require('./routes/reservas'),
-	horarios: require('./routes/horarios'),
-	canchaHorarios: require('./routes/canchaHorarios'),
-	
+	buscarCanchas: require('./routes/buscarCanchas'),
 };
 
 const app = express();
@@ -61,8 +59,16 @@ for (const [routeName, routeController] of Object.entries(routes)) {
 	}
 }
 
+app.post('/api/usuarios/register', 
+	makeHandlerAwareOfAsyncErrors(routes.usuarios.register)
+);
+
 app.post('/api/usuarios/login', 
-	makeHandlerAwareOfAsyncErrors(routes.usuarios.iniciosesion)
+	makeHandlerAwareOfAsyncErrors(routes.usuarios.login)
+);
+
+app.post('/api/buscarCanchas', 
+	makeHandlerAwareOfAsyncErrors(routes.buscarCanchas.buscar)
 );
 
 module.exports = app;

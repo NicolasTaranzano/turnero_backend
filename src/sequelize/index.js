@@ -12,11 +12,9 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 
 const modelDefiners = [
 	require('./models/Cancha.model'),
-    require('./models/CanchaHorario.model'),
     require('./models/Deporte.model'),
-    require('./models/Horario.model'),
     require('./models/Reserva.model'),
-    require('./models/Usuario.model')
+    require('./models/Usuario.model'),
 ];
 
 for (const modelDefiner of modelDefiners) {

@@ -79,5 +79,4 @@ module.exports = {
     create,
     update,
     remove,
-    
 };
