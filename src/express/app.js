@@ -8,7 +8,7 @@ const routes = {
 	canchas: require('./routes/canchas'),
 	reservas: require('./routes/reservas'),
 	buscarCanchas: require('./routes/buscarCanchas'),
-	nuevaReserva: require('./routes/nuevareserva')
+	nuevaReserva: require('./routes/nuevareserva'),
 };
 
 const app = express();

@@ -1,4 +1,3 @@
-const { TbRuler } = require('react-icons/tb');
 const app = require('./express/app');
 const sequelize = require('./sequelize');
 const PORT = 8080;
