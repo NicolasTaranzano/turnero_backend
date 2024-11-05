@@ -8,6 +8,7 @@ const routes = {
 	canchas: require('./routes/canchas'),
 	reservas: require('./routes/reservas'),
 	buscarCanchas: require('./routes/buscarCanchas'),
+	nuevaReserva: require('./routes/nuevareserva')
 };
 
 const app = express();
@@ -69,6 +70,10 @@ app.post('/api/usuarios/login',
 
 app.post('/api/buscarCanchas', 
 	makeHandlerAwareOfAsyncErrors(routes.buscarCanchas.buscar)
+);
+
+app.post('/api/nuevareserva',
+	makeHandlerAwareOfAsyncErrors(routes.nuevaReserva.reservar)
 );
 
 module.exports = app;

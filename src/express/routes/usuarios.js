@@ -28,21 +28,6 @@ async function getById(req, res) {
     }
 }
 
-async function create(req, res) {
-    console.log(req.body); 
-    if (req.body.id) {
-        res.status(400).send(`Bad request: ID should not be provided, since it is determined automatically by the database.`);
-    } else {
-        try {
-            const nuevoUsuario = await models.Usuario.create(req.body);
-            res.status(201).json(nuevoUsuario);
-        } catch (error) {
-            console.error('Error creating user:', error);
-            res.status(500).send('Error creating user');
-        }
-    }
-}
-
 async function update(req, res) {
     const id = getIdParam(req);
     try {
@@ -81,10 +66,10 @@ async function remove(req, res) {
     }
 }
 
-async function login (req, res) {
-    const{ email, contrasena } = req.body;
-    
-    try{
+async function login(req, res) {
+    const { email, contrasena } = req.body;
+
+    try {
         const usuario = await models.Usuario.findOne({
             where: { email: email }
         });
@@ -93,35 +78,46 @@ async function login (req, res) {
             return res.status(401).json({ error: 'Credenciales incorrectas' });
         }
 
-        const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ message: 'Inicio de sesión exitoso', token });
+        // Incluimos el rol en el token JWT
+        const token = jwt.sign({ id: usuario.id, rol: usuario.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        
+        // Enviamos el token y el rol en la respuesta
+        res.json({ message: 'Inicio de sesión exitoso', token, rol: usuario.rol });
     } catch (error) {
+        console.error('Error en el inicio de sesión:', error);
         res.status(400).json({ error: 'Error en el inicio de sesión', detalles: error.message });
     }
-
 }
 
-async function register (req, res) {
-    const { nombre, apellido, email, contrasena } = req.body;
+async function register(req, res) {
+    const { nombre, apellido, email, contrasena, rol } = req.body; // Incluimos rol en el registro
 
     try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(contrasena, salt);
+        if (!contrasena) {
+            return res.status(400).json({ error: 'La contraseña es obligatoria' });
+        }
 
-        const usuario = await models.Usuario.create({ nombre, apellido, email, contrasena: hashedPassword });
+        const hashedPassword = await bcrypt.hash(contrasena, 10);
+        console.log("Contraseña hasheada:", hashedPassword);
+
+        const usuario = await models.Usuario.create({ 
+            nombre, 
+            apellido, 
+            email, 
+            contrasena: hashedPassword,
+            rol // Guardamos el rol en la base de datos
+        });
 
         res.status(201).json({ message: 'Usuario registrado con éxito', usuario });
-
     } catch (error) {
+        console.error('Error en el registro:', error);
         res.status(400).json({ error: 'Error en el registro', detalles: error.message });
     }
-
 }
 
 module.exports = {
     getAll,
     getById,
-    create,
     update,
     remove,
     login,

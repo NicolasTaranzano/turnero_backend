@@ -28,12 +28,7 @@ module.exports = (Sequelize) => {
         horario_inicio:{
             type: DataTypes.TIME,
             allowNull: false,
-        },
-        estado:{
-            type: DataTypes.ENUM('Disponible','Reservada'),
-            allowNull: false,
         }
-    
     },{
         timestamps: false,
         tableName: 'Reserva',

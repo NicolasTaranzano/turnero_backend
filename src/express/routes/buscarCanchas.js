@@ -43,9 +43,6 @@ async function buscar(req, res) {
         
         if (canchasDisponibles.length > 0) {
             console.log('Canchas disponibles encontradas:', canchasDisponibles);
-
-            
-
             return res.status(200).json({ canchasDisponibles }); 
         } else {
             console.log('No hay canchas libres en el día y horario especificado.');

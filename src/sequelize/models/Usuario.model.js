@@ -21,7 +21,7 @@ module.exports = (Sequelize) => {
       unique: true, 
     },
     contrasena: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(60),
       allowNull: false,
     },
     rol: {
