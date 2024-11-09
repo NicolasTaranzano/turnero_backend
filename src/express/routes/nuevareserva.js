@@ -1,20 +1,29 @@
 const { models } = require('../../sequelize');
 
 async function reservar(req, res) {
-    // Asegúrate de que el nombre de las variables coincida exactamente con las propiedades del cuerpo de la solicitud
-    const { IdCancha, fecha, horario_inicio, IdUsuario } = req.body; // Cambié Horario a horario_inicio
+    const { IdCancha, fecha, horario_inicio, IdUsuario } = req.body; 
 
-    // Comprobar si todos los campos son obligatorios
     if (!IdCancha || !fecha || !horario_inicio || !IdUsuario) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios' });
     }
 
     try {
-        // Crear una nueva reserva
+        const existingReserva = await models.Reserva.findOne({
+            where: {
+                IdCancha,
+                fecha,
+                horario_inicio,
+            },
+        });
+
+        if (existingReserva) {
+            return res.status(400).json({ message: 'Esta cancha ya está reservada en ese horario.' });
+        }
+
         const nuevaReserva = await models.Reserva.create({
             IdCancha,
             fecha,
-            horario_inicio, // Usar horario_inicio aquí también
+            horario_inicio, 
             IdUsuario,
         });
 

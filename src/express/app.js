@@ -76,4 +76,8 @@ app.post('/api/nuevareserva',
 	makeHandlerAwareOfAsyncErrors(routes.nuevaReserva.reservar)
 );
 
+app.get('/api/reservas/obtenerPorIdUsuario/:userId',
+	makeHandlerAwareOfAsyncErrors(routes.reservas.obtenerPorIdUsuario)
+)
+
 module.exports = app;

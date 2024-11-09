@@ -4,7 +4,18 @@ const { getIdParam } = require('../helpers');
 async function getAll(req, res) {
     try {
         const reservas = await models.Reserva.findAll();
-        res.status(200).json(reservas);
+
+        const reservasConDetalles = await Promise.all(
+            reservas.map(async (reserva) => {
+                const cancha = await models.Cancha.findByPk(reserva.IdCancha);
+                return {
+                    ...reserva.toJSON(),
+                    cancha: cancha ? cancha.toJSON() : null,
+                };
+            })
+        );
+
+        res.status(200).json({ reservas: reservasConDetalles });
     } catch (error) {
         console.error('Error fetching reservations:', error);
         res.status(500).send('Error fetching reservations');
@@ -70,10 +81,49 @@ async function remove(req, res) {
     }
 }
 
+async function obtenerPorIdUsuario(req, res) {
+    const { userId } = req.params;
+    console.log('Parámetros recibidos:', req.body);
+
+    if (!userId) {
+        return res.status(400).json({ message: 'El ID del usuario es obligatorio' });
+    }
+
+    try {
+        const reservas = await models.Reserva.findAll({
+            where: {
+                IdUsuario: userId,
+            },
+        });
+
+        if (!reservas || reservas.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron reservas para este usuario' });
+        }
+        
+        const reservasConDetalles = await Promise.all(
+            reservas.map(async (reserva) => {
+                const cancha = await models.Cancha.findByPk(reserva.IdCancha);
+                return {
+                    ...reserva.toJSON(),
+                    cancha: cancha ? cancha.toJSON() : null,
+                };
+            })
+        );
+
+        res.status(200).json({ reservas: reservasConDetalles });
+    } catch (error) {
+        console.error('Error al obtener las reservas:', error);
+        return res.status(500).json({ message: 'Error al obtener las reservas' });
+    }
+}
+
+
+
 module.exports = {
     getAll,
     getById,
     create,
     update,
     remove,
+    obtenerPorIdUsuario,
 };
