@@ -78,10 +78,8 @@ async function login(req, res) {
             return res.status(401).json({ error: 'Credenciales incorrectas' });
         }
 
-        // Incluimos el rol en el token JWT
         const token = jwt.sign({ id: usuario.id, rol: usuario.rol }, process.env.JWT_SECRET, { expiresIn: '1h' });
         
-        // Enviamos el token y el rol en la respuesta
         res.json({ message: 'Inicio de sesión exitoso', token, rol: usuario.rol });
     } catch (error) {
         console.error('Error en el inicio de sesión:', error);
@@ -90,7 +88,7 @@ async function login(req, res) {
 }
 
 async function register(req, res) {
-    const { nombre, apellido, email, contrasena, rol } = req.body; // Incluimos rol en el registro
+    const { nombre, apellido, email, contrasena, rol } = req.body; 
 
     try {
         if (!contrasena) {
@@ -105,7 +103,7 @@ async function register(req, res) {
             apellido, 
             email, 
             contrasena: hashedPassword,
-            rol // Guardamos el rol en la base de datos
+            rol 
         });
 
         res.status(201).json({ message: 'Usuario registrado con éxito', usuario });
